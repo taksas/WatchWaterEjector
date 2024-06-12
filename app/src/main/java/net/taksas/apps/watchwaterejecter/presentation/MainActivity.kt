@@ -6,6 +6,7 @@
 
 package net.taksas.apps.watchwaterejecter.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,8 +46,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumnDefaults
@@ -148,12 +151,14 @@ fun MainLayout() {
             }
 
             item {
-
+                val context = LocalContext.current
                 Button(
                     modifier = Modifier
                         .padding(top = 16.dp, bottom = 16.dp)
                         .size(ButtonDefaults.LargeButtonSize),
-                    onClick = { },
+                    onClick = {
+                        context.startActivity(Intent(context, EjectActivity::class.java))
+                    },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
                 ) {
 
@@ -282,3 +287,10 @@ fun MainLayout() {
 fun DefaultPreview() {
     WearApp("Preview Android")
 }
+
+
+
+
+
+
+
