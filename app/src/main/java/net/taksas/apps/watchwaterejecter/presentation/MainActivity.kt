@@ -6,7 +6,9 @@
 
 package net.taksas.apps.watchwaterejecter.presentation
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,18 +39,27 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Help
+import androidx.compose.material.icons.automirrored.rounded.Help
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Help
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -57,6 +68,8 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
+import androidx.wear.compose.material.InlineSlider
+import androidx.wear.compose.material.InlineSliderDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.OutlinedButton
 import androidx.wear.compose.material.PositionIndicator
@@ -81,8 +94,12 @@ class MainActivity : ComponentActivity() {
 
         setTheme(android.R.style.Theme_DeviceDefault)
 
+        // 設定の読み込み
+        val sharedPref = getSharedPreferences("net.taksas.apps.watchwaterejecter.main_preference", Context.MODE_PRIVATE)
+
+
         setContent {
-            WearApp("Android")
+            WearApp(sharedPref)
         }
     }
 }
@@ -90,7 +107,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun WearApp(greetingName: String) {
+fun WearApp(sharedPref: SharedPreferences) {
     WatchWaterEjecterTheme {
         Box(
             modifier = Modifier
@@ -99,17 +116,20 @@ fun WearApp(greetingName: String) {
             contentAlignment = Alignment.Center
         ) {
             TimeText()
-            MainLayout()
+            MainLayout(sharedPref)
         }
     }
 }
 
 @Composable
-fun MainLayout() {
+fun MainLayout(sharedPref: SharedPreferences) {
     var defaultModifierPadding = Modifier.padding(vertical = 0.dp, horizontal = 0.dp)
     val listState = rememberScalingLazyListState()
     val focusRequester = remember { FocusRequester() }
     val coroutineScope = rememberCoroutineScope()
+    val sharedPrefEditor = sharedPref.edit()
+
+
 
     Scaffold(
         positionIndicator = {
@@ -128,7 +148,7 @@ fun MainLayout() {
         ScalingLazyColumn(
             state = listState,
             modifier = Modifier
-                .padding(top = 0.dp, bottom = 0.dp)
+                .padding(top = 0.dp, bottom = 0.dp, start = 4.dp, end = 4.dp,)
                 .fillMaxWidth()
                 .onRotaryScrollEvent {
                     coroutineScope.launch {
@@ -174,26 +194,30 @@ fun MainLayout() {
 
             }
 
+
+
+
+            // sound_select
             item {
                 Chip(
-                    modifier = defaultModifierPadding,
+                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     onClick = { /* Do something */ },
                     enabled = true,
                     // When we have both label and secondary label present limit both to 1 line of text
                     label = {
                         Text(
-                            text = "Deniz Özsakarya",
+                            text = stringResource(R.string.sound_select),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     secondaryLabel = {
-                        Text(text = "Call", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(text = stringResource(R.string.sound_select_description), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     icon = {
                         Icon(
-                            Icons.Outlined.PlayArrow,
-                            contentDescription = "call",
+                            Icons.Rounded.Build,
+                            contentDescription = stringResource(R.string.sound_select_description),
                             modifier = Modifier
                                 .size(ChipDefaults.IconSize)
                                 .wrapContentSize(align = Alignment.Center),
@@ -202,26 +226,107 @@ fun MainLayout() {
                 )
             }
 
+
+            // sound_level
+            item {
+                Text(
+                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.secondary,
+                    fontWeight = FontWeight.Normal,
+                    text = stringResource(R.string.sound_level),
+                    fontSize = 12.sp,
+                )
+            }
+            item {
+                var value by remember { mutableFloatStateOf(sharedPref.getFloat("SOUND_LEVEL", 1.0f)) }
+                InlineSlider(
+                    value = value,
+                    onValueChange = {
+                        sharedPrefEditor.putFloat("SOUND_LEVEL", it).apply()
+                        value = it},
+                    increaseIcon = { Icon(InlineSliderDefaults.Increase, "Increase") },
+                    decreaseIcon = { Icon(InlineSliderDefaults.Decrease, "Decrease") },
+                    valueRange = 0.1f..1.0f,
+                    steps = 6,
+                    segmented = true
+                )
+            }
+
+            // sound_length
+            item {
+                Text(
+                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.secondary,
+                    fontWeight = FontWeight.Normal,
+                    text = stringResource(R.string.sound_length),
+                    fontSize = 12.sp,
+                )
+            }
+            item {
+                var value by remember { mutableFloatStateOf(sharedPref.getFloat("SOUND_LENGTH", 5.0f)) }
+                InlineSlider(
+                    value = value,
+                    onValueChange = {
+                        sharedPrefEditor.putFloat("SOUND_LENGTH", it).apply()
+                        value = it},
+                    increaseIcon = { Icon(InlineSliderDefaults.Increase, "Increase") },
+                    decreaseIcon = { Icon(InlineSliderDefaults.Decrease, "Decrease") },
+                    valueRange = 1.0f..15.0f,
+                    steps = 20,
+                    segmented = false
+                )
+            }
+
+            // vibration_level
+            item {
+                Text(
+                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.secondary,
+                    fontWeight = FontWeight.Normal,
+                    text = stringResource(R.string.vibration_level),
+                    fontSize = 12.sp,
+                )
+            }
+            item {
+                var value by remember { mutableFloatStateOf(sharedPref.getFloat("VIBRATION_LEVEL", 1.0f)) }
+                InlineSlider(
+                    value = value,
+                    onValueChange = {
+                        sharedPrefEditor.putFloat("VIBRATION_LEVEL", it).apply()
+                        value = it},
+                    increaseIcon = { Icon(InlineSliderDefaults.Increase, "Increase") },
+                    decreaseIcon = { Icon(InlineSliderDefaults.Decrease, "Decrease") },
+                    valueRange = 0.0f..1.0f,
+                    steps = 4,
+                    segmented = true
+                )
+            }
+
+
+            // Help Button
             item {
                 Chip(
-                    modifier = defaultModifierPadding,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 0.dp),
                     onClick = { /* Do something */ },
                     enabled = true,
                     // When we have both label and secondary label present limit both to 1 line of text
                     label = {
                         Text(
-                            text = "Deniz Özsakarya",
+                            text = stringResource(R.string.help_select),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     secondaryLabel = {
-                        Text(text = "Call", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(text = stringResource(R.string.help_select_description), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     icon = {
                         Icon(
-                            Icons.Outlined.PlayArrow,
-                            contentDescription = "call",
+                            Icons.AutoMirrored.Rounded.Help,
+                            contentDescription = stringResource(R.string.help_select_description),
                             modifier = Modifier
                                 .size(ChipDefaults.IconSize)
                                 .wrapContentSize(align = Alignment.Center),
@@ -230,33 +335,11 @@ fun MainLayout() {
                 )
             }
 
-            item {
-                Chip(
-                    modifier = defaultModifierPadding,
-                    onClick = { /* Do something */ },
-                    enabled = true,
-                    // When we have both label and secondary label present limit both to 1 line of text
-                    label = {
-                        Text(
-                            text = "Deniz Özsakarya",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    secondaryLabel = {
-                        Text(text = "Call", maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    icon = {
-                        Icon(
-                            Icons.Outlined.PlayArrow,
-                            contentDescription = "call",
-                            modifier = Modifier
-                                .size(ChipDefaults.IconSize)
-                                .wrapContentSize(align = Alignment.Center),
-                        )
-                    }
-                )
-            }
+
+
+
+
+
         }
 
         LaunchedEffect(Unit){
@@ -281,12 +364,12 @@ fun MainLayout() {
 
 
 
-
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
-}
+//
+//@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+//@Composable
+//fun DefaultPreview() {
+//    WearApp(null)
+//}
 
 
 

@@ -7,4 +7,14 @@
     <string name="hello_world">From the Square world,\nHello, %1$s!</string>
     <string name="tile_label">Example tile</string>
     <string name="complication_label">Example complication</string>
+
+    <string name="sound_select">Pattern Select</string>
+    <string name="sound_select_description">Select noise pattern</string>
+
+    <string name="sound_level">Volume</string>
+    <string name="sound_length">Length</string>
+    <string name="vibration_level">Vibration Strength</string>
+
+    <string name="help_select">Help</string>
+    <string name="help_select_description">Open with Smartphone</string>
 </resources>

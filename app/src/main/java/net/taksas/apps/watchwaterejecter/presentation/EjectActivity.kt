@@ -52,8 +52,8 @@ import kotlin.concurrent.timerTask
 
 
 
-var SOUND_LEVEL = 0.3f
-var SOUND_LENGTH = 10.0f
+var SOUND_LEVEL = 1.0f
+var SOUND_LENGTH = 5.0f
 var VIBRATION_LEVEL = 1.0f
 
 
@@ -82,8 +82,8 @@ class EjectActivity : ComponentActivity() {
         // 設定の読み込み
         val sharedPref = getSharedPreferences("net.taksas.apps.watchwaterejecter.main_preference", Context.MODE_PRIVATE)
 
-        SOUND_LEVEL = sharedPref.getFloat("SOUND_LEVEL", 0.3f)
-        SOUND_LENGTH = sharedPref.getFloat("SOUND_LENGTH", 10.0f)
+        SOUND_LEVEL = sharedPref.getFloat("SOUND_LEVEL", 1.0f)
+        SOUND_LENGTH = sharedPref.getFloat("SOUND_LENGTH", 5.0f)
         VIBRATION_LEVEL = sharedPref.getFloat("VIBRATION_LEVEL", 1.0f)
 
         setTheme(android.R.style.Theme_DeviceDefault)
