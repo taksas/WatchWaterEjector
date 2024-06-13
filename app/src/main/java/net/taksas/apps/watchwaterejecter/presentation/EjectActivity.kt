@@ -2,6 +2,7 @@ package net.taksas.apps.watchwaterejecter.presentation
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.AssetFileDescriptor
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -49,9 +50,13 @@ import net.taksas.apps.watchwaterejecter.presentation.theme.WatchWaterEjecterThe
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
+
+
 var SOUND_LEVEL = 0.3f
 var SOUND_LENGTH = 10.0f
 var VIBRATION_LEVEL = 1.0f
+
+
 
 
 
@@ -73,6 +78,13 @@ class EjectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+
+        // 設定の読み込み
+        val sharedPref = getSharedPreferences("net.taksas.apps.watchwaterejecter.main_preference", Context.MODE_PRIVATE)
+
+        SOUND_LEVEL = sharedPref.getFloat("SOUND_LEVEL", 0.3f)
+        SOUND_LENGTH = sharedPref.getFloat("SOUND_LENGTH", 10.0f)
+        VIBRATION_LEVEL = sharedPref.getFloat("VIBRATION_LEVEL", 1.0f)
 
         setTheme(android.R.style.Theme_DeviceDefault)
 
