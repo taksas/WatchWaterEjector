@@ -8,7 +8,12 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.SoundPool
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.CombinedVibration
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
@@ -43,9 +49,15 @@ import net.taksas.apps.watchwaterejecter.presentation.theme.WatchWaterEjecterThe
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
-var SOUND_LEVEL = 1.0f
-var SOUND_LENGTH = 3.0f
+var SOUND_LEVEL = 0.3f
+var SOUND_LENGTH = 10.0f
 var VIBRATION_LEVEL = 1.0f
+
+var vibration_duration = longArrayOf(200L, 100L)
+var vibration_level = intArrayOf(255, 0)
+
+
+
 
 class EjectActivity : ComponentActivity() {
 
@@ -91,7 +103,7 @@ fun EjectMain() {
         ) {
             //TimeText()
             EjectLayout()
-            AssetAudioPlayer()
+            AudioPlayer()
         }
     }
 }
@@ -110,7 +122,7 @@ fun EjectLayout() {
 
 
 @Composable
-fun AssetAudioPlayer() {
+fun AudioPlayer() {
     val context = LocalContext.current
     val mediaPlayer = remember { MediaPlayer() }
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -146,10 +158,38 @@ fun AssetAudioPlayer() {
 
 
 
+        // vibration
+
+        var vibratorManager: VibratorManager? = null
+        var vibrator: Vibrator? = null
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            vibratorManager =
+                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+            val vibrationEffect = VibrationEffect.createWaveform(vibration_duration, vibration_level, 0)
+            val combinedVibration = CombinedVibration.createParallel(vibrationEffect)
+            vibratorManager.vibrate(combinedVibration)
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            val vibrationEffect = VibrationEffect.createWaveform(vibration_duration, vibration_level, 0)
+            vibrator.vibrate(vibrationEffect)
+        }
+
+
+
+
 
         val timer = Timer()
         val task = timerTask {
+            // 終了処理
             mediaPlayer.stop()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (vibratorManager != null) vibratorManager.cancel()
+            } else {
+                if (vibrator != null) vibrator.cancel()
+            }
             EjectActivity.finishActivity()
         }
 
