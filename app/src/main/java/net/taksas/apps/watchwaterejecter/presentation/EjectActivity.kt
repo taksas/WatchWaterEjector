@@ -53,8 +53,7 @@ var SOUND_LEVEL = 0.3f
 var SOUND_LENGTH = 10.0f
 var VIBRATION_LEVEL = 1.0f
 
-var vibration_duration = longArrayOf(200L, 100L)
-var vibration_level = intArrayOf(255, 0)
+
 
 
 
@@ -159,6 +158,8 @@ fun AudioPlayer() {
 
 
         // vibration
+        var vibration_duration = longArrayOf(10000L)
+        var vibration_level = intArrayOf((255*VIBRATION_LEVEL).toInt())
 
         var vibratorManager: VibratorManager? = null
         var vibrator: Vibrator? = null
