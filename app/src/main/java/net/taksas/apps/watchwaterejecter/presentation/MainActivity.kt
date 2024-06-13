@@ -232,7 +232,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.secondary,
+                    color = MaterialTheme.colors.primaryVariant,
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.sound_level),
                     fontSize = 12.sp,
@@ -249,7 +249,10 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     decreaseIcon = { Icon(InlineSliderDefaults.Decrease, "Decrease") },
                     valueRange = 0.1f..1.0f,
                     steps = 6,
-                    segmented = true
+                    segmented = true,
+                    colors = InlineSliderDefaults.colors(
+                        selectedBarColor = MaterialTheme.colors.primaryVariant
+                    )
                 )
             }
 
@@ -258,7 +261,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.secondary,
+                    color = MaterialTheme.colors.primaryVariant,
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.sound_length),
                     fontSize = 12.sp,
@@ -275,7 +278,10 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     decreaseIcon = { Icon(InlineSliderDefaults.Decrease, "Decrease") },
                     valueRange = 1.0f..15.0f,
                     steps = 20,
-                    segmented = false
+                    segmented = false,
+                    colors = InlineSliderDefaults.colors(
+                        selectedBarColor = MaterialTheme.colors.primaryVariant
+                    )
                 )
             }
 
@@ -284,7 +290,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.secondary,
+                    color = MaterialTheme.colors.primaryVariant,
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.vibration_level),
                     fontSize = 12.sp,
@@ -301,7 +307,10 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     decreaseIcon = { Icon(InlineSliderDefaults.Decrease, "Decrease") },
                     valueRange = 0.0f..1.0f,
                     steps = 4,
-                    segmented = true
+                    segmented = true,
+                    colors = InlineSliderDefaults.colors(
+                        selectedBarColor = MaterialTheme.colors.primaryVariant
+                    )
                 )
             }
 
