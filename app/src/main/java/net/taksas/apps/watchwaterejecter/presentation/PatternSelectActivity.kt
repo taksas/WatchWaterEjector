@@ -89,8 +89,8 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
     val coroutineScope = rememberCoroutineScope()
     val sharedPrefEditor = sharedPref.edit()
     val context = LocalContext.current
-    val options = listOf("Pulse Low", "Pulse Mid", "Pulse High", "Pulse2 Low", "Pulse2 Mid", "Pulse2 High")
-    var selectedOption by remember { mutableStateOf(sharedPref.getString("selected_pattern", options[0]) ?: options[0]) }
+    val options = listOf("Pulse_L", "Pulse_M", "Pulse_H", "Pulse_Wave", "Pulse_Fast_L", "Pulse_Fast_M", "Pulse_Fast_H", "Pulse_Fast_Wave")
+    var selectedOption by remember { mutableStateOf(sharedPref.getString("selected_pattern", options[1]) ?: options[1]) }
 
 
 

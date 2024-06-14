@@ -27,7 +27,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,8 +60,8 @@ var SOUND_LENGTH = 5.0f
 var VIBRATION_LEVEL = 1.0f
 
 
-
-
+val sound_pattern_list = listOf("Pulse_L", "Pulse_M", "Pulse_H", "Pulse_Wave", "Pulse_Fast_L", "Pulse_Fast_M", "Pulse_Fast_H", "Pulse_Fast_Wave")
+var SOUND_PATTERN = sound_pattern_list[1]
 
 
 
@@ -85,8 +88,9 @@ class EjectActivity : ComponentActivity() {
         SOUND_LEVEL = sharedPref.getFloat("SOUND_LEVEL", 1.0f)
         SOUND_LENGTH = sharedPref.getFloat("SOUND_LENGTH", 5.0f)
         VIBRATION_LEVEL = sharedPref.getFloat("VIBRATION_LEVEL", 1.0f)
+        SOUND_PATTERN = sharedPref.getString("selected_pattern", sound_pattern_list[1]) ?: sound_pattern_list[1]
 
-        setTheme(android.R.style.Theme_DeviceDefault)
+            setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
             EjectMain()
@@ -145,7 +149,7 @@ fun AudioPlayer() {
 
     DisposableEffect(key1 = mediaPlayer) {
         // assetsフォルダからファイルを開く
-        val assetFileDescriptor: AssetFileDescriptor = context.assets.openFd("sine_-06_05_00400.wav")
+        val assetFileDescriptor: AssetFileDescriptor = context.assets.openFd("$SOUND_PATTERN.wav")
         mediaPlayer.setDataSource(
             assetFileDescriptor.fileDescriptor,
             assetFileDescriptor.startOffset,
@@ -170,7 +174,7 @@ fun AudioPlayer() {
 
 
         // vibration
-        var vibration_duration = longArrayOf(10000L)
+        var vibration_duration = longArrayOf(50000L)
         var vibration_level = intArrayOf((255*VIBRATION_LEVEL).toInt())
 
         var vibratorManager: VibratorManager? = null
