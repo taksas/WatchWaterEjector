@@ -2,7 +2,18 @@ package net.taksas.apps.watchwaterejecter.presentation
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.AssetFileDescriptor
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.os.CombinedVibration
+import android.os.Handler
+import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,9 +30,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +49,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -49,7 +65,9 @@ import androidx.wear.compose.material.ToggleChipDefaults
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import kotlinx.coroutines.launch
+import net.taksas.apps.watchwaterejecter.R
 import net.taksas.apps.watchwaterejecter.presentation.theme.WatchWaterEjecterTheme
+import org.intellij.lang.annotations.Pattern
 
 class PatternSelectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +115,6 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
 
 
 
-
     androidx.wear.compose.material.Scaffold(
         positionIndicator = {
             PositionIndicator(
@@ -135,6 +152,16 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                 radius = displayMetrics.widthPixels.toFloat()/5
             )
 
+            item {
+                androidx.wear.compose.material.Text(
+                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFF99CCFF),
+                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.pattern_select),
+                )
+            }
+
             items(options.size) { index ->
                 val option = options[index]
                 ToggleChip(
@@ -143,6 +170,7 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                         if (it) {
                             selectedOption = option
                             sharedPrefEditor.putString("selected_pattern", selectedOption).apply()
+                            AudioSamplePlayer(option, context)
                         }
                     },
                     label = {
@@ -155,7 +183,11 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                     toggleControl = {
                         RadioButton(
                             selected = selectedOption == option,
-                            onClick = null // This is handled by the ToggleChip
+                            onClick = null, // This is handled by the ToggleChip
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = Color.White,
+                                unselectedColor = Color.White
+                            )
                         )
                     },
                     modifier = Modifier
@@ -178,20 +210,56 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
         LaunchedEffect(Unit){
             focusRequester.requestFocus()
         }
-
-
-
-
-
-
-
-
-
-
-
     }
+}
 
 
 
+fun AudioSamplePlayer(pattern: String, context: Context) {
+    val mediaPlayer = MediaPlayer()
+    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    val originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
+
+    // 音量を任意のものに設定
+    audioManager.setStreamVolume(
+        AudioManager.STREAM_ALARM,
+        (audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM) * SOUND_LEVEL).toInt(),
+        0
+    );
+
+
+    // assetsフォルダからファイルを開く
+    val assetFileDescriptor: AssetFileDescriptor = context.assets.openFd("$pattern.wav")
+    mediaPlayer.setDataSource(
+        assetFileDescriptor.fileDescriptor,
+        assetFileDescriptor.startOffset,
+        assetFileDescriptor.length
+    )
+    assetFileDescriptor.close()
+    mediaPlayer.setAudioAttributes(
+        AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .build()
+    )
+    mediaPlayer.setVolume(1F, 1F)
+    mediaPlayer.setLooping(true)
+    mediaPlayer.prepare()
+    mediaPlayer.setOnCompletionListener {
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume, 0)
+        mediaPlayer.release()
+    }
+    mediaPlayer.start()
+
+    // x秒後に実行する処理を記述する
+    Handler(Looper.getMainLooper()).postDelayed({
+        // 終了処理
+        mediaPlayer.stop()
+    },  (1000).toLong()) // ミリ秒
 
 }
+
+
+
+
+
