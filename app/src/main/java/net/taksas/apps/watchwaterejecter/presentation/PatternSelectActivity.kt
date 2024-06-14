@@ -69,6 +69,8 @@ import net.taksas.apps.watchwaterejecter.R
 import net.taksas.apps.watchwaterejecter.presentation.theme.WatchWaterEjecterTheme
 import org.intellij.lang.annotations.Pattern
 
+
+
 class PatternSelectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +79,11 @@ class PatternSelectActivity : ComponentActivity() {
 
         // 設定の読み込み
         val sharedPref = getSharedPreferences("net.taksas.apps.watchwaterejecter.main_preference", Context.MODE_PRIVATE)
+
+        SOUND_LEVEL = sharedPref.getFloat("SOUND_LEVEL", 1.0f)
+        SOUND_LENGTH = sharedPref.getFloat("SOUND_LENGTH", 5.0f)
+        VIBRATION_LEVEL = sharedPref.getFloat("VIBRATION_LEVEL", 1.0f)
+        SOUND_PATTERN = sharedPref.getString("selected_pattern", sound_pattern_list[1]) ?: sound_pattern_list[1]
 
 
         setContent {
