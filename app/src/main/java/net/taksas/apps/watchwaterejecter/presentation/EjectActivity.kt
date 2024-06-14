@@ -13,6 +13,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CombinedVibration
+import android.os.Handler
+import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -65,8 +67,7 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import net.taksas.apps.watchwaterejecter.R
 import net.taksas.apps.watchwaterejecter.presentation.theme.WatchWaterEjecterTheme
-import java.util.Timer
-import kotlin.concurrent.timerTask
+
 import androidx.compose.ui.graphics.StrokeCap
 
 import androidx.graphics.shapes.CornerRounding
@@ -122,7 +123,7 @@ class EjectActivity : ComponentActivity() {
         VIBRATION_LEVEL = sharedPref.getFloat("VIBRATION_LEVEL", 1.0f)
         SOUND_PATTERN = sharedPref.getString("selected_pattern", sound_pattern_list[1]) ?: sound_pattern_list[1]
 
-            setTheme(android.R.style.Theme_DeviceDefault)
+        setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
             EjectMain()
@@ -378,8 +379,9 @@ fun AudioPlayer() {
         }
 
 
-        val timer = Timer()
-        val task = timerTask {
+
+        // x秒後に実行する処理を記述する
+        Handler(Looper.getMainLooper()).postDelayed({
             // 終了処理
             mediaPlayer.stop()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -388,9 +390,7 @@ fun AudioPlayer() {
                 if (vibrator != null) vibrator.cancel()
             }
             EjectActivity.finishActivity()
-        }
-
-        timer.schedule(task, (SOUND_LENGTH * 1000).toLong())  // 2秒後にタスクを実行
+        },  (SOUND_LENGTH * 1000).toLong()) // ミリ秒
 
 
         onDispose {

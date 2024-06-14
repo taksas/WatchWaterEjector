@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -125,6 +128,13 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                 .focusable(),
         ) {
 
+            val displayMetrics = context.resources.displayMetrics
+            val brushForButton = Brush.radialGradient(
+                colors = listOf(Color(0xFF66B3FF), Color(0xFF0055FF)),
+                center = androidx.compose.ui.geometry.Offset(0.5f, 0.5f),
+                radius = displayMetrics.widthPixels.toFloat()/5
+            )
+
             items(options.size) { index ->
                 val option = options[index]
                 ToggleChip(
@@ -138,7 +148,8 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                     label = {
                         Text(
                             text = option,
-                            style = MaterialTheme.typography.body1
+                            style = MaterialTheme.typography.body1,
+                            color = Color.White
                         )
                     },
                     toggleControl = {
@@ -149,12 +160,15 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 1.dp),
+                        .padding(top = 1.dp)
+                        .background(brushForButton, shape = RoundedCornerShape(50)),
                     colors = ToggleChipDefaults.toggleChipColors(
-                        checkedEndBackgroundColor = MaterialTheme.colors.primaryVariant,
-                        uncheckedEndBackgroundColor = MaterialTheme.colors.primaryVariant,
-                        checkedStartBackgroundColor = MaterialTheme.colors.primary,
-                        uncheckedStartBackgroundColor = MaterialTheme.colors.primary
+                        checkedStartBackgroundColor = Color.Transparent,
+                        checkedEndBackgroundColor = Color.Transparent,
+
+                        uncheckedStartBackgroundColor = Color.Transparent,
+                        uncheckedEndBackgroundColor = Color.Transparent
+
                 ),
                 )
             }
