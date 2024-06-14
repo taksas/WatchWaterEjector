@@ -321,9 +321,20 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     modifier = Modifier.padding(top = 16.dp, bottom = 0.dp),
                     onClick = {
                         // 確認用画面（Artifact: androidx.wear:wear - ConfirmationActivity）
-                        context.startActivity(
-                            Intent(context, ConfirmationActivity::class.java)
-                                .putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION))
+                        val intent = Intent(context, ConfirmationActivity::class.java).also {
+                            it.putExtra(
+                                ConfirmationActivity.EXTRA_ANIMATION_TYPE,
+                                ConfirmationActivity.OPEN_ON_PHONE_ANIMATION
+                            )
+                            it.putExtra(
+                                ConfirmationActivity.EXTRA_MESSAGE,
+                                context.getString(R.string.help_select_description)
+                            )
+                            it.putExtra(ConfirmationActivity.EXTRA_ANIMATION_DURATION_MILLIS,
+                                  2000)
+                        }
+                        context.startActivity(intent)
+
                         // リモート（スマホ側）で開
 
                         val remoteActivityHelper = RemoteActivityHelper(context, Executors.newSingleThreadExecutor())

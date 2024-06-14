@@ -16,6 +16,6 @@
     <string name="vibration_level">Vibration Strength</string>
 
     <string name="help_select">Help</string>
-    <string name="help_select_description">Open with Smartphone</string>
+    <string name="help_select_description">Open on Phone</string>
     <string name="title_activity_pattern_select">PatternSelectActivity</string>
 </resources>
