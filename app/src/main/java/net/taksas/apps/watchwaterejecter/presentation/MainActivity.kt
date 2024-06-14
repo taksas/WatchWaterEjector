@@ -9,6 +9,7 @@ package net.taksas.apps.watchwaterejecter.presentation
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,6 +27,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,11 +59,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.wear.activity.ConfirmationActivity
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -168,27 +178,38 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primary,
+                    color = Color(0xFF99CCFF),
                     fontWeight = FontWeight.Bold,
                     text = stringResource(R.string.app_name),
                 )
             }
 
             item {
+                // `ButtonDefaults.LargeButtonSize`をPxに変換
+                val largeButtonSize = ButtonDefaults.LargeButtonSize
+                val radiusInPx = with(LocalDensity.current) { largeButtonSize.toPx() }
+
+                val brush = Brush.radialGradient(
+                    colors = listOf(Color(0xFF66B3FF), Color(0xFF0055FF)),
+                    center = androidx.compose.ui.geometry.Offset(0.5f, 0.5f),
+                    radius = radiusInPx
+                )
                 Button(
                     modifier = Modifier
                         .padding(top = 16.dp, bottom = 16.dp)
-                        .size(ButtonDefaults.LargeButtonSize),
+                        .size(ButtonDefaults.LargeButtonSize)
+                        .background(brush, shape = CircleShape),
                     onClick = {
                         context.startActivity(Intent(context, EjectActivity::class.java))
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                    shape = CircleShape,
                 ) {
 
 
                     Icon(
                         Icons.Outlined.PlayArrow,
-                        contentDescription = "airplane",
+                        contentDescription = "Start",
                         modifier = Modifier
                             .size(42.dp)
                            
@@ -203,7 +224,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
             // sound_select
             item {
                 Chip(
-                    modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
+                    modifier = Modifier.padding(top = 0.dp, bottom = 16.dp),
                     onClick = { context.startActivity(Intent(context, PatternSelectActivity::class.java)) },
                     enabled = true,
                     // When we have both label and secondary label present limit both to 1 line of text
@@ -222,7 +243,8 @@ fun MainLayout(sharedPref: SharedPreferences) {
                                 .size(ChipDefaults.IconSize)
                                 .wrapContentSize(align = Alignment.Center),
                         )
-                    }
+                    },
+                    colors = ChipDefaults.primaryChipColors(backgroundColor = Color(0xFF0033CC))
                 )
             }
 
@@ -232,7 +254,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primaryVariant,
+                    color = Color(0xFF99CCFF),
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.sound_level),
                     fontSize = 12.sp,
@@ -251,7 +273,8 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     steps = 6,
                     segmented = true,
                     colors = InlineSliderDefaults.colors(
-                        selectedBarColor = MaterialTheme.colors.primaryVariant
+                        selectedBarColor = Color(0xFF99CCFF),
+                        backgroundColor = Color(0xFF0033CC)
                     )
                 )
             }
@@ -261,7 +284,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primaryVariant,
+                    color = Color(0xFF99CCFF),
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.sound_length),
                     fontSize = 12.sp,
@@ -280,7 +303,8 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     steps = 20,
                     segmented = false,
                     colors = InlineSliderDefaults.colors(
-                        selectedBarColor = MaterialTheme.colors.primaryVariant
+                        selectedBarColor = Color(0xFF99CCFF),
+                        backgroundColor = Color(0xFF0033CC)
                     )
                 )
             }
@@ -290,7 +314,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.primaryVariant,
+                    color = Color(0xFF99CCFF),
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.vibration_level),
                     fontSize = 12.sp,
@@ -309,7 +333,8 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     steps = 4,
                     segmented = true,
                     colors = InlineSliderDefaults.colors(
-                        selectedBarColor = MaterialTheme.colors.primaryVariant
+                        selectedBarColor = Color(0xFF99CCFF),
+                        backgroundColor = Color(0xFF0033CC)
                     )
                 )
             }
@@ -364,7 +389,8 @@ fun MainLayout(sharedPref: SharedPreferences) {
                                 .size(ChipDefaults.IconSize)
                                 .wrapContentSize(align = Alignment.Center),
                         )
-                    }
+                    },
+                    colors = ChipDefaults.primaryChipColors(backgroundColor = Color(0xFF0033CC))
                 )
             }
 
@@ -390,7 +416,6 @@ fun MainLayout(sharedPref: SharedPreferences) {
 
     }
 }
-
 
 
 
