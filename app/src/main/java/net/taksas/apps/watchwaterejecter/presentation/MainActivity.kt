@@ -367,7 +367,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                             Intent(Intent.ACTION_VIEW)
                                 .addCategory(Intent.CATEGORY_BROWSABLE)
                                 .setData(
-                                    Uri.parse("http://www.google.com/")
+                                    Uri.parse("https://taksas.net/watchwaterejecter")
                                 ),
                             null
                         )
