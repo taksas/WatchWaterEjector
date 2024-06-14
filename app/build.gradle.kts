@@ -71,10 +71,13 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.ui.graphics)
     implementation(libs.material3)
+    implementation(libs.graphics.shapes.android)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
     implementation("androidx.compose.material:material-icons-extended:1.6.8")
+    implementation("androidx.compose.animation:animation:1.6.8")
+    implementation("org.jetbrains.compose.ui:ui-util:1.4.0")
 }
