@@ -178,7 +178,7 @@ fun EjectLayout() {
 
 
 @Composable
-fun ShapeAsLoader() {
+fun ShapeAsLoader() {  // https://github.com/riggaroo/compose-playtime/tree/main  (Apache-2.0 license)
     val pathMeasurer = remember {
         PathMeasure()
     }
