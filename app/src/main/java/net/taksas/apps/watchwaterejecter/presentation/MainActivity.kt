@@ -9,6 +9,7 @@ package net.taksas.apps.watchwaterejecter.presentation
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -60,7 +61,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
+import androidx.wear.activity.ConfirmationActivity
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumnDefaults
@@ -79,12 +80,14 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.protolayout.LayoutElementBuilders
+import androidx.wear.remote.interactions.RemoteActivityHelper
 import kotlinx.coroutines.launch
 
 
 
 import net.taksas.apps.watchwaterejecter.R
 import net.taksas.apps.watchwaterejecter.presentation.theme.WatchWaterEjecterTheme
+import java.util.concurrent.Executors
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,6 +131,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
     val focusRequester = remember { FocusRequester() }
     val coroutineScope = rememberCoroutineScope()
     val sharedPrefEditor = sharedPref.edit()
+    val context = LocalContext.current
 
 
 
@@ -171,7 +175,6 @@ fun MainLayout(sharedPref: SharedPreferences) {
             }
 
             item {
-                val context = LocalContext.current
                 Button(
                     modifier = Modifier
                         .padding(top = 16.dp, bottom = 16.dp)
@@ -179,7 +182,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     onClick = {
                         context.startActivity(Intent(context, EjectActivity::class.java))
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant)
                 ) {
 
 
@@ -201,7 +204,7 @@ fun MainLayout(sharedPref: SharedPreferences) {
             item {
                 Chip(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
-                    onClick = { /* Do something */ },
+                    onClick = { context.startActivity(Intent(context, PatternSelectActivity::class.java)) },
                     enabled = true,
                     // When we have both label and secondary label present limit both to 1 line of text
                     label = {
@@ -210,9 +213,6 @@ fun MainLayout(sharedPref: SharedPreferences) {
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                    },
-                    secondaryLabel = {
-                        Text(text = stringResource(R.string.sound_select_description), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     icon = {
                         Icon(
@@ -319,7 +319,23 @@ fun MainLayout(sharedPref: SharedPreferences) {
             item {
                 Chip(
                     modifier = Modifier.padding(top = 16.dp, bottom = 0.dp),
-                    onClick = { /* Do something */ },
+                    onClick = {
+                        // 確認用画面（Artifact: androidx.wear:wear - ConfirmationActivity）
+                        context.startActivity(
+                            Intent(context, ConfirmationActivity::class.java)
+                                .putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION))
+                        // リモート（スマホ側）で開
+
+                        val remoteActivityHelper = RemoteActivityHelper(context, Executors.newSingleThreadExecutor())
+                        val result = remoteActivityHelper.startRemoteActivity(
+                            Intent(Intent.ACTION_VIEW)
+                                .addCategory(Intent.CATEGORY_BROWSABLE)
+                                .setData(
+                                    Uri.parse("http://www.google.com/")
+                                ),
+                            null
+                        )
+                    },
                     enabled = true,
                     // When we have both label and secondary label present limit both to 1 line of text
                     label = {
@@ -328,9 +344,6 @@ fun MainLayout(sharedPref: SharedPreferences) {
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                    },
-                    secondaryLabel = {
-                        Text(text = stringResource(R.string.help_select_description), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     icon = {
                         Icon(

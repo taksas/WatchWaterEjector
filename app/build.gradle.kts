@@ -66,10 +66,15 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
+    implementation(libs.wear)
+    implementation(libs.wear.remote.interactions)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.ui.graphics)
+    implementation(libs.material3)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
 }
