@@ -8,6 +8,9 @@
     <string name="complication_description">Quick Eject</string>
     <string name="complication_description_short">Eject</string>
 
+    <string name="tile_start_button_label">Start</string>
+    <string name="tile_sub_label">Quick Eject</string>
+
     <string name="pattern_select">Pattern Select</string>
 
 
