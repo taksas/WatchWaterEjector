@@ -221,9 +221,17 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     enabled = true,
                     // When we have both label and secondary label present limit both to 1 line of text
                     label = {
+
+                        val density = LocalDensity.current
+                        val fontScale = density.fontScale
+                        val adjustedTextStyle = MaterialTheme.typography.body1.copy(
+                            fontSize = MaterialTheme.typography.body1.fontSize / fontScale
+                        )
+
                         Text(
                             text = stringResource(R.string.sound_select),
                             maxLines = 1,
+                            style = adjustedTextStyle,
                             overflow = TextOverflow.Ellipsis
                         )
                     },

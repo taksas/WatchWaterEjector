@@ -49,9 +49,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -181,10 +183,17 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
                         }
                     },
                     label = {
+                        val density = LocalDensity.current
+                        val fontScale = density.fontScale
+                        val adjustedTextStyle = MaterialTheme.typography.body1.copy(
+                            fontSize = MaterialTheme.typography.body1.fontSize / fontScale
+                        )
                         Text(
                             text = option,
-                            style = MaterialTheme.typography.body1,
-                            color = Color.White
+                            style = adjustedTextStyle,
+                            color = Color.White,
+                            overflow = TextOverflow.Visible,
+                            maxLines = 1
                         )
                     },
                     toggleControl = {
