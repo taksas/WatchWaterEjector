@@ -173,12 +173,21 @@ fun MainLayout(sharedPref: SharedPreferences) {
 
 
             item {
+                val density = LocalDensity.current
+                val fontScale = density.fontScale
+                val adjustedTextStyle = MaterialTheme.typography.body1.copy(
+                    fontSize = MaterialTheme.typography.body1.fontSize / fontScale
+                )
+
                 Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
                     color = Color(0xFF99CCFF),
                     fontWeight = FontWeight.Bold,
                     text = stringResource(R.string.app_name),
+                    style = adjustedTextStyle,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
 

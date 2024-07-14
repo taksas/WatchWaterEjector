@@ -11,8 +11,8 @@ android {
         applicationId = "net.taksas.apps.watchwaterejecter"
         minSdk = 30
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 1021
+        versionName = "1.0.2.1"
         vectorDrawables {
             useSupportLibrary = true
         }
