@@ -162,12 +162,19 @@ fun PatternSelectLayout(sharedPref: SharedPreferences) {
             )
 
             item {
+                val density = LocalDensity.current
+                val fontScale = density.fontScale
+                val adjustedTextStyle = MaterialTheme.typography.body1.copy(
+                    fontSize = MaterialTheme.typography.body1.fontSize / fontScale)
                 androidx.wear.compose.material.Text(
                     modifier = Modifier.padding(top = 0.dp, bottom = 0.dp),
                     textAlign = TextAlign.Center,
                     color = Color(0xFF99CCFF),
                     fontWeight = FontWeight.Bold,
                     text = stringResource(R.string.pattern_select),
+                    style = adjustedTextStyle,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                 )
             }
 
