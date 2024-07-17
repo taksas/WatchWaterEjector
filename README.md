@@ -1,6 +1,9 @@
 # Watch Water Ejector
 Provide smartwatches with more options for draining sound from the speaker.
 
+## Download
+<figure class="wp-block-image"><a href="https://play.google.com/store/apps/details?id=net.taksas.apps.watchwaterejecter&amp;pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img src="https://play.google.com/intl/ja/badges/static/images/badges/ja_badge_web_generic.png" alt="Google Play で手に入れよう"/></a></figure>
+
 ## Description
 Watch Water Ejecter is a drainage app for devices running Wear OS.
 Developed with the goal of "providing an advantage over any standard drainer or existing drainer app," the app provides drainer functionality for devices such as the Pixel Watch that do not come standard with drainer functionality, and more options for devices that do come standard with drainer functionality.
