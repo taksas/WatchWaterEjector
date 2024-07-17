@@ -1,4 +1,4 @@
-# Watch Water Ejecter
+# Watch Water Ejector
 Provide smartwatches with more options for draining sound from the speaker.
 
 ## Description
