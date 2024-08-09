@@ -383,14 +383,24 @@ fun AudioPlayer() {
         // x秒後に実行する処理を記述する
         Handler(Looper.getMainLooper()).postDelayed({
             // 終了処理
-            mediaPlayer.stop()
+            try {
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.stop()
+                }
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            } catch (_: IllegalStateException) {
+
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (vibratorManager != null) vibratorManager.cancel()
+                vibratorManager?.cancel()
             } else {
-                if (vibrator != null) vibrator.cancel()
+                vibrator?.cancel()
             }
             EjectActivity.finishActivity()
         },  (SOUND_LENGTH * 1000).toLong()) // ミリ秒
+
 
 
         onDispose {
