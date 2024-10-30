@@ -38,6 +38,7 @@ import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Help
+import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.runtime.LaunchedEffect
@@ -216,6 +217,16 @@ fun MainLayout(sharedPref: SharedPreferences) {
                     )
                 }
 
+            }
+
+            item{
+                Icon(
+                    Icons.Outlined.ArrowDownward,
+                    contentDescription = "Start",
+                    modifier = Modifier
+                        .size(42.dp)
+
+                )
             }
 
 

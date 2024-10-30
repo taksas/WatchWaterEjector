@@ -18,6 +18,7 @@ import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -85,7 +86,8 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.Brush
 
 import androidx.compose.ui.graphics.PathMeasure
-
+import androidx.fragment.app.FragmentActivity
+import androidx.wear.ambient.AmbientModeSupport
 
 
 var SOUND_LEVEL = 1.0f
@@ -99,7 +101,28 @@ var SOUND_PATTERN = sound_pattern_list[1]
 
 
 
-class EjectActivity : ComponentActivity() {
+class EjectActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackProvider {
+
+    private lateinit var ambientController: AmbientModeSupport.AmbientController
+
+    override fun getAmbientCallback(): AmbientModeSupport.AmbientCallback {
+        return object : AmbientModeSupport.AmbientCallback() {
+            override fun onEnterAmbient(ambientDetails: Bundle?) {
+                super.onEnterAmbient(ambientDetails)
+                // アンビエントモードに入った時の処理
+            }
+
+            override fun onExitAmbient() {
+                super.onExitAmbient()
+                // アンビエントモードから出た時の処理
+            }
+
+            override fun onUpdateAmbient() {
+                super.onUpdateAmbient()
+                // アンビエントモード中の更新処理
+            }
+        }
+    }
 
     companion object {
         private var instance: EjectActivity? = null
@@ -114,6 +137,13 @@ class EjectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+
+        // 常時表示モードを有効化
+        setShowWhenLocked(true)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        // AmbientModeControllerの設定
+        ambientController = AmbientModeSupport.attach(this)
 
         // 設定の読み込み
         val sharedPref = getSharedPreferences("net.taksas.apps.watchwaterejecter.main_preference", Context.MODE_PRIVATE)
