@@ -18,6 +18,7 @@ import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -419,6 +420,7 @@ fun AudioPlayer() {
                 }
                 mediaPlayer.reset()
                 mediaPlayer.release()
+
             } catch (_: IllegalStateException) {
 
             }
@@ -434,8 +436,15 @@ fun AudioPlayer() {
 
 
         onDispose {
-            mediaPlayer.stop()
+            try {
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.stop()
+                }
+            } catch (e: IllegalStateException) {
+                // エラーを無視
+            }
             mediaPlayer.release()
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume, 0)
         }
 
 
